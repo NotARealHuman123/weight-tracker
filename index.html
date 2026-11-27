@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <meta name="description" content="Personal weight-loss tracker">
+  <title>Weight Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="title">Today</h1>
+    <span id="dateLabel"></span>
+  </header>
+
+  <main>
+    <!-- ================= DASHBOARD ================= -->
+    <section id="view-home" class="view active">
+      <div class="grid2">
+        <div class="card stat">
+          <div class="label">Calories left</div>
+          <div class="big" id="d-cal-left">–</div>
+          <div class="sub" id="d-cal-sub"></div>
+          <div class="bar" id="d-cal-barwrap"><span id="d-cal-bar"></span></div>
+        </div>
+        <div class="card stat">
+          <div class="label">Protein left</div>
+          <div class="big" id="d-pro-left">–</div>
+          <div class="sub" id="d-pro-sub"></div>
+          <div class="bar protein" id="d-pro-barwrap"><span id="d-pro-bar"></span></div>
+        </div>
+        <div class="card stat">
+          <div class="label">Current weight</div>
+          <div class="big" id="d-weight">–</div>
+          <div class="sub" id="d-weight-sub"></div>
+        </div>
+        <div class="card stat">
+          <div class="label">Total lost</div>
+          <div class="big" id="d-lost">–</div>
+          <div class="sub" id="d-lost-sub"></div>
+        </div>
+        <div class="card stat">
+          <div class="label">BMI</div>
+          <div class="big" id="d-bmi">–</div>
+          <div class="sub" id="d-bmi-sub"></div>
+        </div>
+        <div class="card stat">
+          <div class="label">Weekly avg</div>
+          <div class="big" id="d-weekly">–</div>
+          <div class="sub" id="d-weekly-sub"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" data-go="weight">⚖️ Log weight</button>
+        <button class="btn primary" data-action="scan">📷 Scan food</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Today's checklist</h2><span class="sub" id="homeCheckCount"></span></div>
+        <div id="homeChecks" class="checks compact"></div>
+      </div>
+    </section>
+
+    <!-- ================= FOOD ================= -->
+    <section id="view-food" class="view">
+      <div class="card">
+        <div class="totline"><span>Calories</span><b id="f-cal"></b></div>
+        <div class="bar" id="f-cal-barwrap"><span id="f-cal-bar"></span></div>
+        <div class="totline mt"><span>Protein</span><b id="f-pro"></b></div>
+        <div class="bar protein" id="f-pro-barwrap"><span id="f-pro-bar"></span></div>
+      </div>
+
+      <button class="btn primary xl" data-action="scan">📷 Scan barcode</button>
+
+      <div class="card">
+        <h2>Quick add</h2>
+        <form id="quickAdd" autocomplete="off">
+          <input id="qa-name" placeholder="What did you eat? (optional)" enterkeyhint="next">
+          <div class="row">
+            <label>Calories<input id="qa-cal" type="number" inputmode="numeric" min="0" step="1" required></label>
+            <label>Protein (g)<input id="qa-pro" type="number" inputmode="decimal" min="0" step="0.1"></label>
+          </div>
+          <button class="btn primary" type="submit">＋ Add</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Today's food</h2>
+        <ul id="foodList" class="list"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Recent &amp; favorite foods</h2>
+        <div class="seg" id="libTabs">
+          <button data-lib="recent" class="on">Recent</button>
+          <button data-lib="fav">★ Favorites</button>
+        </div>
+        <ul id="libList" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- ================= WEIGHT ================= -->
+    <section id="view-weight" class="view">
+      <div class="card">
+        <h2>Log weight</h2>
+        <form id="weightForm" autocomplete="off">
+          <label>Weight (lbs)<input id="w-val" class="huge" type="number" inputmode="decimal" step="0.1" min="50" max="1000" required></label>
+          <label>Date<input id="w-date" type="date" required></label>
+          <button class="btn primary" type="submit">Save weight</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Trend</h2>
+          <div class="seg small" id="rangeTabs">
+            <button data-range="30">30d</button>
+            <button data-range="90" class="on">90d</button>
+            <button data-range="0">All</button>
+          </div>
+        </div>
+        <canvas id="chart"></canvas>
+        <div class="legend">
+          <span><i class="dot raw"></i>Daily</span>
+          <span><i class="dot ma"></i>7-day average</span>
+          <span><i class="dot goal"></i>Goal</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>History</h2>
+        <ul id="weightList" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- ================= CHECKLIST ================= -->
+    <section id="view-check" class="view">
+      <div class="card">
+        <div class="card-head"><h2>Today</h2><span class="sub" id="perfectStreak"></span></div>
+        <div id="checkList" class="checks"></div>
+      </div>
+      <div class="card">
+        <h2>Last 14 days</h2>
+        <div class="histwrap"><table id="checkGrid" class="hist"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h2>Daily targets</h2>
+        <form id="settingsForm" autocomplete="off">
+          <div class="row">
+            <label>Calories<input id="s-cal" type="number" inputmode="numeric" min="500" step="1" required></label>
+            <label>Protein (g)<input id="s-pro" type="number" inputmode="numeric" min="0" step="1" required></label>
+          </div>
+          <h2 class="mt">Body</h2>
+          <div class="row">
+            <label>Starting weight (lbs)<input id="s-start" type="number" inputmode="decimal" step="0.1" min="50" required></label>
+            <label>Goal weight (lbs)<input id="s-goal" type="number" inputmode="decimal" step="0.1" min="50" placeholder="optional"></label>
+          </div>
+          <div class="row">
+            <label>Height (feet)<input id="s-ft" type="number" inputmode="numeric" min="3" max="8" step="1" required></label>
+            <label>Height (inches)<input id="s-in" type="number" inputmode="numeric" min="0" max="11" step="1" required></label>
+          </div>
+          <button class="btn primary" type="submit">Save settings</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Backup</h2>
+        <p class="sub">Your data lives only on this phone. Export a backup now and then, and keep it somewhere safe (Google Drive, email it to yourself, etc.).</p>
+        <div class="stack">
+          <button class="btn" id="exportBtn">⬇️ Export backup (JSON)</button>
+          <label class="btn file-btn">⬆️ Import backup
+            <input id="importFile" type="file" accept="application/json,.json" hidden>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Danger zone</h2>
+        <button class="btn danger" id="wipeBtn">Delete all data</button>
+        <p class="sub center mt" id="versionLabel"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= BOTTOM TABS ================= -->
+  <nav class="tabbar">
+    <button data-go="home" class="on"><span class="ic">🏠</span>Home</button>
+    <button data-go="food"><span class="ic">🍽️</span>Food</button>
+    <button data-go="weight"><span class="ic">⚖️</span>Weight</button>
+    <button data-go="check"><span class="ic">✅</span>Habits</button>
+    <button data-go="settings"><span class="ic">⚙️</span>Settings</button>
+  </nav>
+
+  <!-- ================= SCANNER ================= -->
+  <dialog id="scanDlg" class="sheet">
+    <div class="sheet-body">
+      <div class="sheet-head"><h2>Scan barcode</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+      <div class="video-wrap">
+        <video id="scanVideo" playsinline muted autoplay></video>
+        <div class="reticle"></div>
+      </div>
+      <p id="scanStatus" class="sub center mt">Starting camera…</p>
+      <form id="manualCode" class="inline-form" autocomplete="off">
+        <input id="mc-input" inputmode="numeric" pattern="[0-9]*" placeholder="Or type the barcode number">
+        <button class="btn" type="submit">Look up</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================= PRODUCT / PORTION ================= -->
+  <dialog id="prodDlg" class="sheet">
+    <div class="sheet-body">
+      <div class="sheet-head">
+        <h2 id="prodName">Product</h2>
+        <div class="head-btns">
+          <button class="icon-btn" id="prodFav" aria-label="Favorite">☆</button>
+          <button class="icon-btn" data-close aria-label="Close">✕</button>
+        </div>
+      </div>
+      <div id="prodInfo"></div>
+      <div class="seg" id="unitTabs">
+        <button data-unit="serving">Servings</button>
+        <button data-unit="g">Grams</button>
+      </div>
+      <div class="stepper">
+        <button class="btn" type="button" data-step="-1" aria-label="Less">−</button>
+        <input id="amt" type="number" inputmode="decimal" min="0" step="any">
+        <button class="btn" type="button" data-step="1" aria-label="More">+</button>
+      </div>
+      <div class="sub center" id="amtUnit"></div>
+      <div class="total" id="prodTotal"></div>
+      <button class="btn primary xl" id="prodAdd">Add to today</button>
+      <button class="btn ghost" id="prodEdit">✏️ Edit nutrition info</button>
+    </div>
+  </dialog>
+
+  <!-- ================= CUSTOM FOOD ================= -->
+  <dialog id="customDlg" class="sheet">
+    <div class="sheet-body">
+      <div class="sheet-head"><h2 id="customTitle">Product not found</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+      <p class="sub" id="customMsg"></p>
+      <form id="customForm" autocomplete="off">
+        <label>Name<input id="cf-name" required placeholder="e.g. Protein bar"></label>
+        <label>Brand<input id="cf-brand" placeholder="optional"></label>
+        <label>Serving size (grams)<input id="cf-sg" type="number" inputmode="decimal" min="0" step="any" placeholder="optional, from the label"></label>
+        <label>The numbers below are
+          <select id="cf-basis">
+            <option value="serving">per serving</option>
+            <option value="100g">per 100 g</option>
+          </select>
+        </label>
+        <div class="row">
+          <label>Calories<input id="cf-kcal" type="number" inputmode="decimal" min="0" step="any" required></label>
+          <label>Protein (g)<input id="cf-pro" type="number" inputmode="decimal" min="0" step="any"></label>
+        </div>
+        <button class="btn primary" type="submit">Save food &amp; continue</button>
+      </form>
+    </div>
+  </dialog>
+
+  <div id="loading" class="loading"><div class="spinner"></div><p id="loadingText">Loading…</p></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
